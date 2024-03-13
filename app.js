@@ -1,6 +1,6 @@
 var i = 1;
 var bet = 5; // 1 = 1$
-var ses = '894184cb-fc2e-454e-b52f-3aa4eda7a979';
+var ses = '5a35aefa-7067-4b70-8d39-ecac080f3bfa';
 
 deal();
 function deal() {
@@ -20,7 +20,7 @@ fetch("https://rgs-cu2.hacksawgaming.com/api/play/bet", {
   },
   "referrer": "https://static-live.hacksawgaming.com/",
   "referrerPolicy": "strict-origin-when-cross-origin",
-  "body": "{\"seq\":"+i+",\"sessionUuid\":\""+ses+"\",\"bets\":[{\"betAmount\":\""+bet*100+"\",\"customData\":{\"betAmount\":\"10\",\"playerBet\":\"0\",\"bankerBet\":\"10\",\"tieBet\":\"0\"}}],\"offerId\":null,\"promotionId\":null,\"autoplay\":false}",
+  "body": "{\"seq\":"+i+",\"sessionUuid\":\""+ses+"\",\"bets\":[{\"betAmount\":\""+bet*100+"\",\"customData\":{\"betAmount\":\""+bet*100+"\",\"playerBet\":\"0\",\"bankerBet\":\""+bet*100+"\",\"tieBet\":\"0\"}}],\"offerId\":null,\"promotionId\":null,\"autoplay\":false}",
   "method": "POST",
   "mode": "cors",
   "credentials": "omit"
