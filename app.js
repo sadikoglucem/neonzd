@@ -1,4 +1,4 @@
-// nok acilmadi BRL yaptik.
+// usd
 
 const lib = require("blackjack-strategy");
 
@@ -19,12 +19,12 @@ var options = {
                               // (v1.4 or higer) - see below for details
 };
 
-var evotoken = 'eyJraWQiOiIxNjcwOTQwNTA0MTM4IiwidHlwIjoiSldUIiwiYWxnIjoiRVMyNTYifQ.eyJjdXIiOiJUUlkiLCJndHAiOiJibGFja2phY2tjbGFzc2ljIiwicGduIjoiYmxhY2tqYWNrY2xhc3NpY19mMF9nMF9oMF9pMF9qMF9ub3RfbW9iaWxlX3N3IiwianVyIjoiQ1ciLCJoaWVyYXJjaHkiOiJbYmFieWxvbnJidDAwMDAwMV0iLCJtaWQiO';
-var evotoken1 = 'iJibGFja2phY2tjbGFzc2ljX2YwX2cwX2gwX2kwX2owIiwicGlkIjoicjVmZ3Q3bGMzd3BzcWE3dSIsImV4cCI6MTcxNTE5OTYxMywidGlkIjoiYmxhY2tqYWNrMGgwaTBqMCIsImNpZCI6ImJhYnlsb25yYnQwMDAwMDEiLCJzaWQiOiJyNWZndDdsYzN3cHNxYTd1cjVmZ3Q3MnViN2w0c3JiYWJhYmU2ZGY0In0.Q4DkQx4Cxtb8Td2iEr-F3';
-var evotoken2 = 'qilKQ_rY-SsLar5hiztYeM3HMCGbWR06E2As6Ou-i2Eoekerm4s05ZfeMOwXz6Dpw';
-var ses = 'r5fgt7lc3wpsqa7ur5fgt72ub7l4srbababe6df4';
-var curr = 'TRY';
-var amo = 120;
+var evotoken = 'eyJraWQiOiIxNjcwOTQwNTA0MTM4IiwidHlwIjoiSldUIiwiYWxnIjoiRVMyNTYifQ.eyJjdXIiOiJDQUQiLCJndHAiOiJibGFja2phY2tjbGFzc2ljIiwicGduIjoiYmxhY2tqYWNrY2xhc3NpY19mMF9nMF9oMF9pMF9qMF9ub3RfbW9iaWxlX3N3IiwianVyIjoiQ1ciLCJoaWVyYXJjaHkiOiJbYmFieWxvbnJidDAwMDAwMV0iLCJtaWQiO';
+var evotoken1 = 'iJibGFja2phY2tjbGFzc2ljX2YwX2cwX2gwX2kwX2owIiwicGlkIjoic2N6aTJraTI1a3JyNWd2ZSIsImV4cCI6MTcyMTI0MTcxNSwidGlkIjoiYmxhY2tqYWNrMGgwaTBqMCIsImNpZCI6ImJhYnlsb25yYnQwMDAwMDEiLCJzaWQiOiJzY3ppMmtpMjVrcnI1Z3Zlc2N6aTJrbGEzaXdqM3ptdjEyNTlmNDgwIn0.YoOHziPeecHttbTa8gIPT';
+var evotoken2 = 'yI7Sl8Kuq24asEEZZRCtcDuEBFuGGUWaSGR6-pxa4iJ8gnNDvb180bjTt-5-MxlXw';
+var ses = 'sczi2ki25krr5gvesczi2kla3iwj3zmv1259f480';
+var curr = 'CAD';
+var amo = 24;
 var splitt = 0;
 var provider = "babylonrbt";
 deal();
@@ -48,17 +48,46 @@ function deal() {
   "credentials": "omit"
 }).then(res => res.text()).then(res => {
         res = res.replace('\n','');
+        if(!res.includes('evo-error-code=2001')) {
+            if(res.match(/dealerhand.handcomplete=(.*?)&/)) {
         if(res.match(/dealerhand.handcomplete=(.*?)&/)[1] === "false") {
         var nextact = res.match(/nextactiontoken=(.*?)&/)[1];
         dobest(nextact, res);
         } else if(res.match(/dealerhand.handcomplete=(.*?)&/)[1] === "true") {
             deal();
         };
+    } else {
+
+        console.log('Something happened. Retrying!');
+        deal();
+    }
+    } else {
+        console.log('Önceden el kalmıs!! :(');
+        fetch("https://"+provider+".evo-games.com/public/rng/dragon/servlet/CasinoGameServlet;jsession="+ses+"?action=init&sessid="+ses+"&gameId=blackjackclassic_f0_g0_h0_i0_j0_not_mobile_sw&wantsfreerounds=true&freeroundmode=false&wantsreels=true&no-cache=1716567906861&ne_evo_token1="+evotoken1+"&ne_casinoId=babylonrbt000001&ne_balance_id=combined&ne_currency=CAD&ne_evo_token2="+evotoken2+"&ne_evo_token="+evotoken+"&ne_mode=real&ne_device=desktop", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
+    "sec-ch-ua": "\"Chromium\";v=\"105\", \")Not;A=Brand\";v=\"8\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "cross-site",
+    "Referer": "https://babylonrbt000001-static2.casinomodule.com/",
+    "Referrer-Policy": "strict-origin-when-cross-origin"
+  },
+  "body": null,
+  "method": "GET"
+}).then(res => res.text()).then(res => {
+    var nextact = res.match(/nextactiontoken=(.*?)&/)[1];
+    dobest(nextact, res);
+});
+    }
     });
 };
 var i = 0;
 function dobest(nextaction, res) {
-  console.log('Split: ' + splitt);
+//   // console.log('Split: ' + splitt);
   if(res.match(/box.i1.playerhand.i0.availableactions=(.*?)&/)[1] === "INSURANCE%2CNO_INSURANCE" || res.match(/box.i1.playerhand.i0.availableactions=(.*?)&/)[1] === "NO_INSURANCE%2CINSURANCE") {
 
     noins(nextaction, 'dab');
@@ -68,7 +97,7 @@ function dobest(nextaction, res) {
     
     
 } else if(res.match(/box.i1.playerhand.i0.availableactions=(.*?)&/)[1] === "SPLIT%2CNO_SPLIT" || res.match(/box.i1.playerhand.i0.availableactions=(.*?)&/)[1] === "NO_SPLIT%2CSPLIT") { 
-// console.log(res);
+// // console.log(res);
   var playercards = res.match(/box.i1.playerhand.i0.hand=(.*?)&/)[1].split('%2C');
   playercards.forEach((card,i) => {
     if(card[0].includes('T') || card[0].includes('Q') || card[0].includes('K') || card[0].includes('J')) {
@@ -90,10 +119,10 @@ function dobest(nextaction, res) {
       if(dealercard === 1) {
           noins(nextaction);
       };
-      console.log(playercards);
-      console.log('Dealer: ' + dealercard);
+      // console.log(playercards);
+      // console.log('Dealer: ' + dealercard);
       var move = lib.GetRecommendedPlayerAction(playercards, dealercard, 1, true, options);
-      console.log('Move: ' + move);
+      // console.log('Move: ' + move);
       if(move !== 'split') {
         nosplitr(nextaction);
       } else if(move === 'split') {
@@ -113,7 +142,7 @@ playercards.forEach((card,i) => {
     playercards[i] = Number(card[0]);
   }
 });
-console.log(playercards);
+// console.log(playercards);
 var dealercard = (res.match(/dealerhand.hand=(.*?)&/)[1][0]);
 if(dealercard.includes('T') || dealercard.includes('Q') || dealercard.includes('K') || dealercard.includes('J')) {
   dealercard = 10;
@@ -122,7 +151,7 @@ if(dealercard.includes('T') || dealercard.includes('Q') || dealercard.includes('
 } else {
   dealercard = Number(dealercard);
 }
-console.log('Dealer: ' + dealercard);
+// console.log('Dealer: ' + dealercard);
     if(dealercard === 1) {
         noins(nextaction);
     };
@@ -163,7 +192,7 @@ console.log('Dealer: ' + dealercard);
         playercards[i] = Number(card[0]);
       }
     });
-    console.log(playercards);
+    // console.log(playercards);
     var dealercard = (res.match(/dealerhand.hand=(.*?)&/)[1][0]);
     if(dealercard.includes('T') || dealercard.includes('Q') || dealercard.includes('K') || dealercard.includes('J')) {
       dealercard = 10;
@@ -172,7 +201,7 @@ console.log('Dealer: ' + dealercard);
     } else {
       dealercard = Number(dealercard);
     }
-    console.log('Dealer: ' + dealercard);
+    // console.log('Dealer: ' + dealercard);
         if(dealercard === 1) {
             noins(nextaction);
         };
@@ -184,7 +213,7 @@ console.log('Dealer: ' + dealercard);
           deal();
         } else {
         var move = lib.GetRecommendedPlayerAction(playercards, dealercard, 1, true, options);
-            console.log('Move: ' + move);
+            // console.log('Move: ' + move);
         if(move === 'stand') {
           stand(nextaction);
         } else if(move === 'hit') {
@@ -216,7 +245,7 @@ console.log('Dealer: ' + dealercard);
       playercards[i] = Number(card[0]);
     }
   });
-  console.log(playercards);
+  // console.log(playercards);
   var dealercard = (res.match(/dealerhand.hand=(.*?)&/)[1][0]);
   if(dealercard.includes('T') || dealercard.includes('Q') || dealercard.includes('K') || dealercard.includes('J')) {
     dealercard = 10;
@@ -225,12 +254,12 @@ console.log('Dealer: ' + dealercard);
   } else {
     dealercard = Number(dealercard);
   }
-  console.log('Dealer: ' + dealercard);
+  // console.log('Dealer: ' + dealercard);
       if(dealercard === 1) {
           noins(nextaction);
       };
       var move = lib.GetRecommendedPlayerAction(playercards, dealercard, 1, true, options);
-      console.log('Move: ' + move);
+      // console.log('Move: ' + move);
       if(move === 'stand') {
         stand(nextaction);
       } else if(move === 'hit') {
@@ -347,7 +376,7 @@ fetch("https://"+provider+".evo-games.com/public/rng/dragon/servlet/CasinoGameSe
 }).then(pes => pes.text()).then(res => {
     res = res.replace('\n','');
     if(splitt === 1) {
-    console.log(res);
+    // console.log(res);
     }
           var nextact = res.match(/nextactiontoken=(.*?)&/)[1];
           if(nextact !== "null") {
@@ -362,7 +391,7 @@ playercards.forEach((card,i) => {
     playercards[i] = Number(card[0]);
   }
 });
-console.log(playercards);
+// console.log(playercards);
 var dealercard = (res.match(/dealerhand.hand=(.*?)&/)[1][0]);
 if(dealercard.includes('T') || dealercard.includes('Q') || dealercard.includes('K') || dealercard.includes('J')) {
   dealercard = 10;
@@ -371,7 +400,7 @@ if(dealercard.includes('T') || dealercard.includes('Q') || dealercard.includes('
 } else {
   dealercard = Number(dealercard);
 }
-console.log('Dealer: ' + dealercard);
+// console.log('Dealer: ' + dealercard);
           } else if(i === 1) {
             var playercards = res.match(/box.i1.playerhand.i1.hand=(.*?)&/)[1].split('%2C');
             playercards.forEach((card,i) => {
@@ -383,7 +412,7 @@ console.log('Dealer: ' + dealercard);
                 playercards[i] = Number(card[0]);
               }
             });
-            console.log(playercards);
+            // console.log(playercards);
             var dealercard = (res.match(/dealerhand.hand=(.*?)&/)[1][0]);
             if(dealercard.includes('T') || dealercard.includes('Q') || dealercard.includes('K') || dealercard.includes('J')) {
               dealercard = 10;
@@ -392,26 +421,26 @@ console.log('Dealer: ' + dealercard);
             } else {
               dealercard = Number(dealercard);
             }
-            console.log('Dealer: ' + dealercard);
+            // console.log('Dealer: ' + dealercard);
           }
     var total = 0;
     playercards.forEach(cardd => {
       total+= cardd;
     });
-  console.log('Total: ' + total);
+  // console.log('Total: ' + total);
     if(total >= 21) {
       if(splitt === 0) {
-        console.log('Busted.');
+        // console.log('Busted.');
         setTimeout(function() {
         deal();
         }, 100);
       } else if(splitt === 1) {
         if(i === 0) {
-          console.log('ilk el.');
+          // console.log('ilk el.');
           i++;
           dobest(nextact, res);
         } else if(i === 1) {
-        console.log('ikinci el.');
+        // console.log('ikinci el.');
         setTimeout(function() {
           deal();
           }, 100);
@@ -419,7 +448,7 @@ console.log('Dealer: ' + dealercard);
         }
       }
     } else {
-      console.log('Hm napsak ki?');
+      // console.log('Hm napsak ki?');
       dobest(nextact, res);
 
     };
@@ -453,9 +482,9 @@ fetch("https://"+provider+".evo-games.com/public/rng/dragon/servlet/CasinoGameSe
   "credentials": "omit"
 }).then(pes => pes.text()).then(pes => {
   pes = pes.replace('\n','');
-  // console.log(pes);
+  // // console.log(pes);
   if(splitt === 0) {
-    // console.log('Result: ' + pes.match(/box.i1.playerhand.i0.iswinning=(.*?)&/)[1]);
+    // // console.log('Result: ' + pes.match(/box.i1.playerhand.i0.iswinning=(.*?)&/)[1]);
     setTimeout(() => {
     deal();  
     }, 100);
@@ -464,7 +493,7 @@ fetch("https://"+provider+".evo-games.com/public/rng/dragon/servlet/CasinoGameSe
     if(i === 1) {
       i = 0;
       splitt = 0;
-      // console.log('Result: ' + pes.match(/box.i1.playerhand.i0.iswinning=(.*?)&/)[1]);
+      // // console.log('Result: ' + pes.match(/box.i1.playerhand.i0.iswinning=(.*?)&/)[1]);
       setTimeout(() => {
         deal();  
         }, 100);
@@ -500,7 +529,7 @@ fetch("https://"+provider+".evo-games.com/public/rng/dragon/servlet/CasinoGameSe
 }).then(pes => pes.text()).then(pes => {
     pes = pes.replace('\n','');
 var nextact = pes.match(/nextactiontoken=(.*?)&/)[1];
-    console.log('Split False');
+    // console.log('Split False');
     dobest(nextact, pes);
 
 });
@@ -527,14 +556,14 @@ function splitr(nextaction) {
 }).then(pest => pest.text()).then(pest => {
   pest = pest.replace('\n','');
   if(!pest.includes('errorcode')) {
-  console.log(pest);
+  // console.log(pest);
   var nextact = pest.match(/nextactiontoken=(.*?)&/)[1];
   if(nextact !== "null") {
   splitt = 1;
 
       dobest(nextact, pest);
   } else {
-    console.log('Result: ' + pest.match(/box.i1.playerhand.i0.iswinning=(.*?)&/)[1]);
+    // console.log('Result: ' + pest.match(/box.i1.playerhand.i0.iswinning=(.*?)&/)[1]);
     deal();
   }
   } else {
@@ -564,13 +593,13 @@ function double(nextaction) {
   }).then(pes => pes.text()).then(pes => {
     pes = pes.replace('\n','');
     if(splitt === 0) {
-      // console.log('Result: ' + pes.match(/box.i1.playerhand.i0.iswinning=(.*?)&/)[1]);
+      // // console.log('Result: ' + pes.match(/box.i1.playerhand.i0.iswinning=(.*?)&/)[1]);
       deal();
     } else if(splitt === 1) {
       if(i === 1) {
         i = 0;
         splitt = 0;
-        // console.log('Result: ' + pes.match(/box.i1.playerhand.i0.iswinning=(.*?)&/)[1]);
+        // // console.log('Result: ' + pes.match(/box.i1.playerhand.i0.iswinning=(.*?)&/)[1]);
         deal();
       } else if(i === 0) {
         i++;
